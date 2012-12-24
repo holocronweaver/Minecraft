@@ -1,5 +1,6 @@
 from pyglet.gl import *
 from pyglet.window import key
+from ctypes import c_float
 import StringIO
 import base64
 import math
@@ -184,7 +185,7 @@ class Model(object):
             else:
                 index += 1
         # create vertex list
-        self._shown[position] = self.batch.add(count, GL_QUADS, self.group, 
+        self._shown[position] = self.batch.add(count, GL_QUADS, self.group,
             ('v3f/static', vertex_data),
             ('t2f/static', texture_data))
     def hide_block(self, position, immediate=True):
@@ -249,8 +250,8 @@ class Window(pyglet.window.Window):
         self.reticle = None
         self.dy = 0
         self.model = Model()
-        self.label = pyglet.text.Label('', font_name='Arial', font_size=18, 
-            x=10, y=self.height - 10, anchor_x='left', anchor_y='top', 
+        self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
+            x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
             color=(0, 0, 0, 255))
         pyglet.clock.schedule_interval(self.update, 1.0 / 60)
     def set_exclusive_mouse(self, exclusive):
@@ -364,13 +365,13 @@ class Window(pyglet.window.Window):
             y = max(-90, min(90, y))
             self.rotation = (x, y)
     def on_key_press(self, symbol, modifiers):
-        if symbol == key.W:
+        if symbol == key.W or symbol == key.UP:
             self.strafe[0] -= 1
-        elif symbol == key.S:
+        elif symbol == key.S or symbol == key.DOWN:
             self.strafe[0] += 1
-        elif symbol == key.A:
+        elif symbol == key.A or symbol == key.LEFT:
             self.strafe[1] -= 1
-        elif symbol == key.D:
+        elif symbol == key.D or symbol == key.RIGHT:
             self.strafe[1] += 1
         elif symbol == key.SPACE:
             if self.dy == 0:
@@ -380,13 +381,13 @@ class Window(pyglet.window.Window):
         elif symbol == key.TAB:
             self.flying = not self.flying
     def on_key_release(self, symbol, modifiers):
-        if symbol == key.W:
+        if symbol == key.W or symbol == key.UP:
             self.strafe[0] += 1
-        elif symbol == key.S:
+        elif symbol == key.S or symbol == key.DOWN:
             self.strafe[0] -= 1
-        elif symbol == key.A:
+        elif symbol == key.A or symbol == key.LEFT:
             self.strafe[1] += 1
-        elif symbol == key.D:
+        elif symbol == key.D or symbol == key.RIGHT:
             self.strafe[1] -= 1
     def on_resize(self, width, height):
         # label
@@ -433,7 +434,7 @@ class Window(pyglet.window.Window):
     def draw_label(self):
         x, y, z = self.position
         self.label.text = '%02d (%.2f, %.2f, %.2f) %d / %d' % (
-            pyglet.clock.get_fps(), x, y, z, 
+            pyglet.clock.get_fps(), x, y, z,
             len(self.model._shown), len(self.model.world))
         self.label.draw()
     def draw_reticle(self):
